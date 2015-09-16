@@ -5,11 +5,6 @@
 \usepackage{graphicx}
 \usepackage[numbers]{natbib}
 
-\usepackage{enumitem}
-% For algorithms
-\usepackage{algorithm}
-\usepackage{algorithmic}
-
 % For syntax trees
 \usepackage{qtree}
 \usepackage{ulem}
@@ -18,41 +13,25 @@
 \usepackage{multicol}
 
 \renewcommand{\#}[1]{\textbf{#1}}
-
-%\newcommand{\shortcite}[1]{\citeauthor{#1}}
 \newcommand{\shortcite}[1]{\citeauthor{#1} (\citeyear{#1})}
 
 % For diagrams
 \usepackage{tikz}
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
-%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
-
-\title{Supplemenary Materials for ``Exploring Models and Data for Image Question Answering''}
 
 \author{
-Mengye Ren\\
-Department of Computer Science\\
-University of Toronto\\
-%Toronto ON, CANADA M5S 1A1\\
-\texttt{mren@cs.toronto.edu} \\
-\And
-Ryan Kiros\\
-Department of Computer Science\\
-University of Toronto\\
-%Toronto ON, CANADA M5S 1A1\\
-\texttt{rkiros@cs.toronto.edu} \\
-\And
-Richard Zemel\\
-Department of Computer Science\\
-University of Toronto\\
-%Toronto ON, CANADA M5S 1A1\\
-\texttt{zemel@cs.toronto.edu} \\
+Mengye Ren${}^1$, Ryan Kiros${}^1$, Richard S. Zemel${}^{1, 2}$\\
+University of Toronto${}^1$\\
+Canadian Institute for Advanced Research${}^2$\\
+\texttt{\{mren, rkiros, zemel\}@cs.toronto.edu}
 }
+
+\title{Supplemenary Materials for ``Exploring Models and Data for Image Question Answering''}
 
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 
-%\nipsfinalcopy % Uncomment for camera-ready version
+\nipsfinalcopy
 
 \begin{document}
 \maketitle
