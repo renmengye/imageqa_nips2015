@@ -125,7 +125,7 @@ Correct answers are in green and incorrect in red. The numbers in parentheses
 are the probabilities assigned to the top-ranked answer by the given model. 
 The leftmost example is from the DAQUAR dataset, and the others are from our 
 new COCO-QA datset.}
-\label{fig:number_questions}
+\label{fig:demo_questions}
 \end{figure}
 
 \section{Problem Formulation}
@@ -341,7 +341,7 @@ objects that contain smaller objects.
 
 We rejected the answers that appear too rarely or too often in our generated
 dataset. Details can be found in Supplementary Materials. After this QA
-rejection process the mode composition reduced from 24.80\% down to 6.65\% in
+rejection process the mode composition reduced from 24.98\% down to 7.30\% in
 the test set of COCO-QA.
 
 \section{Experimental Results}
@@ -349,12 +349,19 @@ the test set of COCO-QA.
 \subsection{Datasets}
 
 Table~\ref{tab:dataset_category_stats} summarizes the statistics of COCO-QA. It
-should be noted that since we applied the QA pair rejection process, mode-
-guessing performs very poorly on COCO-QA. However, COCO-QA questions are
+should be noted that since we applied the QA pair rejection process,
+mode-guessing performs very poorly on COCO-QA. However, COCO-QA questions are
 actually easier to answer than DAQUAR from a human point of view. This
 encourages the model to exploit salient object relations instead of
 exhaustively searching all possible relations. COCO-QA dataset can be
 downloaded at \url{http://www.cs.toronto.edu/~mren/imageqa/data/cocoqa}
+
+Maximum question length is 55, and average is 9.65.  The most common answers
+are ``two'' (3116, 2.65\%), ``white'' (2851, 2.42\%), and ``red'' (2443,
+2.08\%). The least common are ``eagle'' (25, 0.02\%) ``tram'' (25, 0.02\%), and
+``sofa'' (25, 0.02\%).  The median answer is bed (867, 0.737\%).  Across the
+entire test set (38948 QAs), 9072 (23.29\%) overlap in training questions, and
+7284 (18.70\%) overlap in training question-answer pairs.
 
 \begin{table}
 \caption{COCO-QA question type break-down}
@@ -449,7 +456,16 @@ the CNN features alone, and we simply estimate $p(o | c)$ empirically:
 $\hat{p}(o | c) = \frac{count(o, c)}{count(c)}$. We use Laplace smoothing on
 this empirical distribution.
 
+\item \#{K-NN}: In the task of image caption generation, Devlin et al. \cite{devlin15} has 
+shown that a nearest neighbors baseline approach actually performs very well. Here,
+we include experimental results using nearest neighbors; however, different from 
+image caption generation, here the similarity measure includes both image and text. 
+we use the bag-of-words representation learned from IMG+BOW, and append it to the CNN image
+features. We use Euclidean distance of the entire concatenated vector. It is possible to improve
+our nearest neighbor result by more similarity learning.
+
 \end{enumerate}
+
 
 \subsection{Performance Metrics}
 
@@ -481,11 +497,12 @@ single-word answers.
 \hline         
 MULTI-WORLD
 \cite{malinowski14b} &  0.1273  &  0.1810  &  0.5147  &  -       &  -       &  -       \\
-GUESS                &  0.1824  &  0.2965  &  0.7759  &  0.0665  &  0.1742  &  0.7344  \\
+GUESS                &  0.1824  &  0.2965  &  0.7759  &  0.0730  &  0.1837  &  0.7413  \\
 BOW                  &  0.3267  &  0.4319  &  0.8130  &  0.3752  &  0.4854  &  0.8278  \\
 LSTM                 &  0.3273  &  0.4350  &  0.8162  &  0.3676  &  0.4758  &  0.8234  \\
 IMG                  &  -       &  -       &  -       &  0.4302  &  0.5864  &  0.8585  \\
 IMG+PRIOR            &  -       &  -       &  -       &  0.4466  &  0.6020  &  0.8624  \\
+K-NN (K=31, 13)      &  0.3185  &  0.4242  &  0.8063  &  0.4496  &  0.5698  &  0.8557  \\
 IMG+BOW              &  0.3417  &  0.4499  &  0.8148  &\#{0.5592}&\#{0.6678}&\#{0.8899}\\
 % VIS+BOW            & -        & -        &  -       &  0.4824  &  0.5973  & 0.8632   \\
 VIS+LSTM             &  0.3441  &  0.4605  &\#{0.8223}&  0.5331  &  0.6391  & 0.8825   \\
@@ -512,11 +529,12 @@ HUMAN                &  0.6027  &  0.6104  &  0.7896  &  -       &  -       &  -
 \hline
            &   Object  &   Number &   Color   & Location \\
 \hline
-GUESS      &   0.0211  &   0.3584 &   0.1387  & 0.0893   \\
+GUESS      &   0.0239  &   0.3606 &   0.1457  & 0.0908   \\
 BOW        &   0.3727  &   0.4356 &   0.3475  & 0.4084   \\
 LSTM       &   0.3587  &   0.4534 &   0.3626  & 0.3842   \\
 IMG        &   0.4073  &   0.2926 &   0.4268  & 0.4419   \\
 IMG+PRIOR  &   -       &   0.3739 &   0.4899  & 0.4451   \\
+K-NN       &   0.4799  &   0.3699 &   0.3723  & 0.4080   \\
 IMG+BOW    &\#{0.5866} &   0.4410 &\#{0.5196} &\#{0.4939}\\
 % VIS+BOW  &   0.5124  &   0.3819 &   0.4282  & 0.4076   \\
 VIS+LSTM   &   0.5653  &\#{0.4610}&   0.4587  & 0.4552   \\
@@ -531,15 +549,20 @@ FULL       &\#{0.6108} &\#{0.4766}&   0.5148  &\#{0.5028}\\
 
 From the above results we observe that our model outperforms the baselines and
 the existing approach in terms of answer accuracy and WUPS. Our VIS+LSTM and
-Malinkowski et al's recurrent neural network model \cite{malinowski15} achieved
-somewhat similar performance on DAQUAR. It is surprising to see that IMG+BOW
-model is very strong on both dataset. One limitation of our VIS+LSTM model is
-that we are not able to consume image features as large as 4096 dimensions at
-one time step, so the dimensionality reduction may lose some useful
-information. This also shows that in Image QA tasks, and in particular on the
-simple questions studied here, sequential word interaction may not be as
-important as in other natural language tasks. A simple average of all three
-models further boost the performance by 1-2\%, outperforming other models.
+Malinkowski et al.'s recurrent neural network model \cite{malinowski15} achieved
+somewhat similar performance on DAQUAR. A simple average of all three models
+further boost the performance by 1-2\%, outperforming other models.
+
+It is surprising to see that IMG+BOW model is very strong on both dataset. One
+limitation of our VIS+LSTM model is that we are not able to consume image
+features as large as 4096 dimensions at one time step, so the dimensionality
+reduction may lose some useful information. We tried to give IMG+BOW a 500 dim.
+image vector, and it does worse than VIS+LSTM ($\approx$48\%). 
+
+By comparing the “blind” version of the BOW and LSTM models, we hypothesize
+that in Image QA tasks, and in particular on the simple questions studied here,
+sequential word interaction may not be as important as in other natural
+language tasks. 
 
 It is also interesting that the blind model does not lose much on the DAQUAR
 dataset, We speculate that it is likely that the ImageNet images are very
@@ -551,8 +574,8 @@ whereas the indoor scenes have considerable clutter; and (3) COCO-QA has more
 data to train complex models.
 
 There are many interesting examples but due to space limitations we can only
-show a few in Figure~\ref{fig:selected_questions} and more in Supplementary
-Materials. Full results are available to view at
+show a few in Figure~\ref{fig:demo_questions} and
+Figure~\ref{fig:selected_questions}. Full results are available to view at
 \url{http://www.cs.toronto.edu/~mren/imageqa/results}.
 
 For some of the examples, we specifically tested extra questions (the ones have
@@ -574,8 +597,8 @@ challenge, the IMG+BOW benefited largely from its single object recognition
 ability. Usually, the IMG+BOW and VIS+LSTM can easily get the correct answer
 just from the image features. However, the challenging part is to consider
 spatial relations between multiple objects and to focus on details of the
-image. Some qualitative results in Figure~\ref{fig:selected_questions} show
-that the models only did a moderately acceptable job on it. Sometimes it fails
+image. The models only did a moderately acceptable job on it, for instance in
+the first picture of Figure~\ref{fig:number_questions} and the fourth picture of Figure~\ref{fig:selected_questions}. Sometimes it fails
 to make a correct decision but outputs the most salient object, while sometimes
 the blind model can equally guess the most probable objects based on the
 question alone (e.g., chairs should be around the dining table). Nonetheless,
@@ -586,42 +609,42 @@ difference between pure object classification and image question answering.
 counting ability of the VIS+LSTM model compared to other blind baselines. In
 COCO-QA there is some observable counting ability in very clean images with
 single object type. The model can sometimes count up to five or six. However,
-as shown in Figure~\ref{fig:selected_questions}, the ability is fairly weak as
-it does not count correctly when different object types are present. There is a
-lot of room for improvement in the counting task, and in fact this could be a
-separate computer vision problem on its own.
+as shown in the second picture of Figure~\ref{fig:selected_questions}, the
+ability is fairly weak as it does not count correctly when different object
+types are present. There is a lot of room for improvement in the counting task,
+and in fact this could be a separate computer vision problem on its own.
 
 \textbf{Color}: In COCO-QA there is a significant win for the VIS+LSTM model
 against the blind models on color-type questions. We further discovered that
 the model is not only able to recognize the dominant color of the image but
-sometimes associate different colors to different objects, as shown in
-Figure~\ref{fig:selected_questions}. However, the model still fails on a number
-of easy examples. Adding prior knowledge provides an immediate gain on the
-``IMG'' model in terms of accuracy on Color and Number questions. The gap
-between the IMG+PRIOR and IMG+BOW shows some localized color association
-ability in the CNN image representation.
+sometimes associate different colors to different objects, as shown in the
+first picture of Figure~\ref{fig:selected_questions}. However, the model still
+fails on a number of easy examples. Adding prior knowledge provides an
+immediate gain on the ``IMG'' model in terms of accuracy on Color and Number
+questions. The gap between the IMG+PRIOR and IMG+BOW shows some localized color
+association ability in the CNN image representation.
 
 \begin{figure}
 \centering\tiny
 $\begin{array}{p{3.2cm} p{3.2cm} p{3.2cm} p{3.2cm}}
     \scalebox{0.23}{
-        \includegraphics[width=\textwidth, height=.7\textwidth]{4018.jpg}}
+        \includegraphics[width=\textwidth, height=.7\textwidth]{33827.jpg}}
     \parbox{3.2cm}{
         \vskip 0.05in
-        COCOQA 4018\\
-        \textbf{What is the color of the bowl?}\\
-        Ground truth: blue\\
-        IMG+BOW: \textcolor{green}{blue (0.49)}\\
-        2-VIS+LSTM: \textcolor{green}{blue (0.52)}\\
-        BOW: \textcolor{red}{white (0.45)}
+        COCOQA 33827\\
+        \textbf{What is the color of the cat?}\\
+        Ground truth: black\\
+        IMG+BOW: \textcolor{green}{black (0.55)}\\
+        2-VIS+LSTM: \textcolor{green}{black (0.73)}\\
+        BOW: \textcolor{red}{gray (0.40)}
 
         \vskip 0.05in
-        COCOQA 4018a\\
-        \textbf{What is the color of the vest?}\\
+        COCOQA 33827a\\
+        \textbf{What is the color of the couch?}\\
         Ground truth: red\\
-        IMG+BOW: \textcolor{green}{red (0.29)}\\
-        2-VIS+LSTM: \textcolor{red}{orange (0.37)}\\
-        BOW: \textcolor{red}{orange (0.57)}
+        IMG+BOW: \textcolor{green}{red (0.65)}\\
+        2-VIS+LSTM: \textcolor{red}{black (0.44)}\\
+        BOW: \textcolor{green}{red (0.39)}
 }
 &
     \scalebox{0.23}{
@@ -715,7 +738,6 @@ focusing on a limited domain of questions. However, this limited range of
 questions allow us to study the results more in depth. Lastly, it is also hard
 to interpret why the model outputs a certain answer. By comparing the model to
 some baselines we can roughly infer whether the model understood the image.
-
 Visual attention is another future direction, which could both improve the
 results (based on recent successes in image captioning \cite{xu15}) as well as
 help explain the model output by examining the attention output at every
@@ -724,7 +746,8 @@ timestep.
 \subsubsection*{Acknowledgments}
 
 We would like to thank Nitish Srivastava for the support of Toronto Conv Net,
-from which we extracted the CNN image features.
+from which we extracted the CNN image features. We would also like to thank
+anonymous reviewers for their valuable and helpful comments.
 
 \begin{small}
 \bibliography{Reference}
