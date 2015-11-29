@@ -1,0 +1,29 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips15submit_e,times}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[numbers]{natbib}
+
+% For syntax trees
+\usepackage{qtree}
+\usepackage{ulem}
+
+% For multi columns
+\usepackage{multicol}
+
+% For enumerate
+\usepackage{enumitem}
+
+\renewcommand{\#}[1]{\textbf{#1}}
+\newcommand{\shortcite}[1]{\citeauthor{#1} (\citeyear{#1})}
+
+% For diagrams
+\usepackage{tikz}
+\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\nipsfinalcopy
+
+\graphicspath{{./figures/}}
